@@ -1,9 +1,33 @@
 import './App.css';
+import Login from './Login.js'
+import React,{useState,useEffect} from 'react';
+import { getTokenFromUrl } from './spotify';
+import SpotifyWebApi from 'spotify-web-api-js';
+import Player from './Player';
 
 function App() {
+  const [token,setToken] = useState();
+  const spotify = new SpotifyWebApi();
+  
+  useEffect(()=>{
+    const hash = getTokenFromUrl();
+    window.location.hash = "";
+    const _token = hash.access_token;
+
+    if (_token){
+      setToken(_token);
+
+      spotify.setAccessToken(_token);
+      spotify.getMe().then((user) => {
+        console.log("gg",user);
+      })
+    }
+    
+  },[]);
+
   return (
     <div className="App">
-      Spotify-Clone
+      { token ? <Player /> : <Login /> }
     </div>
   );
 }
